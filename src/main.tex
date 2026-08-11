@@ -4,7 +4,7 @@
 \usepackage{fontspec}
 \usepackage{booktabs}
 \usepackage{graphicx}
-\graphicspath{{imagens/}}
+\graphicspath{{imagens/}{../imagens/}}
 
 \newcommand{\placeholder}[2]{%
   \fbox{\parbox[c][#2][c]{#1}{\centering\textbf{PLACEHOLDER}}}%
@@ -26,7 +26,7 @@
         \item José Ricardo Alves Figueirôa
         \item Techlead @ Jusfy
         \item Computer Engineer --- UFPE
-        \item IoT Master --- Polytech Nice Côte d'Azur
+        \item IoT Master --- Polytech Nice Côte d’Azur
       \end{itemize}
     \column{0.4\textwidth}
       \includegraphics[width=\linewidth]{qrcode-border}
@@ -44,7 +44,7 @@
   \end{center}
 \end{frame}
 
-\section{Autenticação}
+\section{Autenticação}\label{sec:autenticacao}
 
 \begin{frame}{Autenticação (AuthN) vs Autorização (AuthZ)}
   \begin{center}
