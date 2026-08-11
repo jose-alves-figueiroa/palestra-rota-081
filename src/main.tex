@@ -1,0 +1,141 @@
+\documentclass[11pt,aspectratio=169]{beamer}
+\usetheme{metropolis}
+
+\usepackage{fontspec}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\graphicspath{{imagens/}}
+
+\newcommand{\placeholder}[2]{%
+  \fbox{\parbox[c][#2][c]{#1}{\centering\textbf{PLACEHOLDER}}}%
+}
+
+\title{Escalando uma autenticação legada}
+\date{\today}
+\author{José Ricardo Alves Figueirôa}
+\institute{Jusfy}
+
+\begin{document}
+
+\maketitle
+
+\begin{frame}{whoami}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.6\textwidth}
+      \begin{itemize}
+        \item José Ricardo Alves Figueirôa
+        \item Techlead @ Jusfy
+        \item Computer Engineer --- UFPE
+        \item IoT Master --- Polytech Nice Côte d'Azur
+      \end{itemize}
+    \column{0.4\textwidth}
+      \includegraphics[width=\linewidth]{qrcode-border}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Objetivo}
+  \begin{itemize}
+    \item Desacoplar autenticação do monolito
+    \item Centralizar regras de negócio de login
+    \item Remover boilerplate, duplicações de soluções e superfícies de ataque no login
+  \end{itemize}
+  \begin{center}
+    \includegraphics[width=0.55\textwidth]{mesh-vs-star}
+  \end{center}
+\end{frame}
+
+\section{Autenticação}
+
+\begin{frame}{Autenticação (AuthN) vs Autorização (AuthZ)}
+  \begin{center}
+    \includegraphics[width=0.85\textwidth]{authz-vs-authn}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Três formas de provar quem você é}
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{auth-types}
+  \end{center}
+\end{frame}
+
+\section{JWTs}
+
+\begin{frame}{JWT}
+  JWT (JSON Web Token) é um formato padronizado para transportar
+  informações entre sistemas de forma compacta e verificável.
+  \begin{center}
+    \includegraphics[width=0.6\textwidth]{jwt}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Bearer Token}
+  \begin{itemize}
+    \item Bearer Authentication é um mecanismo de autenticação HTTP em
+      que o cliente envia um token junto com a requisição.
+    \item O nome ``Bearer'' significa literalmente: ``Quem portar esse
+      token pode usá-lo.''
+    \item A API não verifica quem está segurando o token; ela apenas
+      verifica se o token é válido.
+  \end{itemize}
+\end{frame}
+
+\section{Hydra}
+
+\begin{frame}{O que é o Ory Hydra?}
+  É o server de autorização OAuth2/OIDC, desenvolvido e mantido pela Ory.
+  \begin{itemize}
+    \item Valida tokens
+    \item Emite tokens
+    \item Assina tokens
+    \item Revoga tokens
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Topologia}
+  \begin{center}
+    \placeholder{0.9\textwidth}{5cm}
+  \end{center}
+\end{frame}
+
+\section{OAuth2}
+
+\begin{frame}{Client credentials}
+  \begin{center}
+    \includegraphics[width=0.85\textwidth]{m2m-flow}
+  \end{center}
+\end{frame}
+
+\begin{frame}{PKCE}
+  \begin{center}
+    \includegraphics[width=0.7\textwidth]{h2m-flow}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Fluxo Implementado}
+  \begin{center}
+    \includegraphics[width=0.5\textwidth]{pkce-real}
+  \end{center}
+\end{frame}
+
+\section{Arquitetura}
+
+\begin{frame}{Arquitetura}
+  \begin{center}
+    \placeholder{0.9\textwidth}{5cm}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Arquitetura}
+  \begin{center}
+    \placeholder{0.9\textwidth}{5cm}
+  \end{center}
+\end{frame}
+
+\begin{frame}[standout]
+  Obrigado!
+
+  \vspace{1em}
+  \includegraphics[width=0.2\textwidth]{qrcode-borderless}
+\end{frame}
+
+\end{document}
