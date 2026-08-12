@@ -1,24 +1,20 @@
 \documentclass[11pt,aspectratio=169]{beamer}
 
 \usetheme{metropolis}
+\metroset{numbering=fraction}
 
 \usepackage{fontspec}
+\usepackage{polyglossia}
+\setmainlanguage{portuguese}
 \usepackage{booktabs}
 \usepackage{graphicx}
 
 \graphicspath{{./images/}}
 
-\newcommand{\placeholder}[2]{%
-  \fbox{\parbox[c][#2][c]{#1}{\centering\textbf{PLACEHOLDER}}}%
-}
-
 \title{Escalando uma autenticação legada para sistemas distribuídos}
 \author{José Ricardo Alves Figueirôa (Zé)}
 \date{}
 \institute{Rota 081}
-% Boa tarde, pessoal
-% Hoje eu vou falar sobre os desafios de escalar uma auth legada para sistemas distribuídos
-% A ideia aqui não é falar uma arq. perfeita, mas as decisões tomadas ao longo do caminho
 
 \begin{document}
 
@@ -27,6 +23,7 @@
 \section*{whoami}
 
 \begin{frame}{whoami}
+    \note{Boa tarde, pessoal. Hoje eu vou falar sobre os desafios de escalar uma auth legada para sistemas distribuídos. A ideia aqui não é falar de uma arquitetura perfeita, mas as decisões tomadas ao longo do caminho.}
 
     \vfill
     
@@ -39,13 +36,13 @@
           \item Techlead @ Jusfy
           \item Computer Engineer --- UFPE
           \item Master --- Polytech Nice Côte d’Azur
-          \item Vítima do Shal Hulud 2.0
+          \item Vítima do Shai-Hulud 2.0
         \end{itemize}
         
         \column{0.4\textwidth}
         
         \centering
-        \includegraphics[width=0.65\linewidth]{images/qrcode-borderless.png}
+        \includegraphics[width=0.65\linewidth]{qrcode-borderless.png}
     
         \vspace{0.5em}
     
@@ -64,7 +61,7 @@
 
 \begin{frame}{whoami}
     \begin{figure}
-        \includegraphics[width=0.75\linewidth]{images/shuhulud_2_0.png}
+        \includegraphics[width=0.75\linewidth]{shuhulud_2_0.png}
     \end{figure}
 \end{frame}
 
@@ -74,10 +71,10 @@
 
 \section{Motivação}
 
-\begin{frame}{No príncipio}
+\begin{frame}{No princípio}
     \begin{figure}
         \centering
-        \includegraphics[width=1\linewidth]{images/architecture_diagram_v0.png}
+        \includegraphics[width=1\linewidth]{architecture_diagram_v0.png}
     \end{figure}
     % architecture-beta
     % service user(mdi:account)[User]
@@ -91,7 +88,7 @@
 
 \begin{frame}{Autenticação no backend}
   \begin{center}
-    \includegraphics[width=1\linewidth]{images/middleware_01.png}
+    \includegraphics[width=1\linewidth]{login-endpoint.png}
     % app.post('/login', async (req, res) => {
     %   const user = await authenticate(req.body)
     %   const token = jwt.sign({ sub: user.id }, process.env.JWT_SECRET)
@@ -104,7 +101,7 @@
   \begin{center}
     \begin{figure}
         \centering
-        \includegraphics[width=1\linewidth]{images/middleware_03.png}
+        \includegraphics[width=1\linewidth]{simple-middleware.png}
     \end{figure}
 % export const isLoggedIn = (req, res, next) => {
 %   const token = req.headers.authorization?.split(' ')[1]
@@ -126,7 +123,7 @@
         width=\linewidth,
         height=0.9\textheight,
         keepaspectratio
-    ]{images/architecture_diagram_v1.png}
+    ]{architecture_diagram_v1.png}
     \end{figure}
 % architecture-beta
 %     service user(mdi:account)[User]
@@ -157,7 +154,7 @@
 \begin{frame}{API Keys}
     \begin{figure}
         \centering
-        \includegraphics[width=1\linewidth]{images/middleware_02.png}
+        \includegraphics[width=1\linewidth]{middleware_02.png}
     \end{figure}
     % app.use((req, res, next) => {
     %   const token = req.headers.authorization?.split(' ')[1];
@@ -177,16 +174,14 @@
 \end{frame}
 
 \begin{frame}{O caos}
-% Até que o sistema cresceu ainda mais, o serviço a não pode acessar o b
-% O usuário X não pode acessar o servico c e por aí vai
-% A gente chegou nesse ponto. A arquitetura cresceu, mas a nossa autenticação não cresceu junto.
+\note{Até que o sistema cresceu ainda mais, o serviço a não pode acessar o b. O usuário X não pode acessar o serviço c e por aí vai. A gente chegou nesse ponto: a arquitetura cresceu, mas a nossa autenticação não cresceu junto.}
 \begin{figure}
     \centering
     \includegraphics[
         width=\linewidth,
         height=0.9\textheight,
         keepaspectratio
-    ]{images/architecture_diagram_v2.png}
+    ]{architecture_diagram_v2.png}
 \end{figure}
 % architecture-beta
 
@@ -230,6 +225,17 @@
 %     external:B --> T:monolith
 \end{frame}
 
+\begin{frame}{Graphic design is my passion}
+    \begin{figure}
+        \centering
+        \includegraphics[
+            width=\linewidth,
+            height=0.9\textheight,
+            keepaspectratio
+        ]{graphic-design.png}
+    \end{figure}
+\end{frame}
+
 \section{Autenticação}
 
 \begin{frame}{Autenticação (AuthN) vs Autorização (AuthZ)}
@@ -247,8 +253,7 @@
 \section{JWT}
 
 \begin{frame}{JWT - JSON Web Token}
-% “Uma característica importante do JWT é que ele é autocontido. Depois que eu emito esse token, qualquer serviço que consiga validar a assinatura pode aceitá-lo até o momento em que ele expire. Eu não preciso consultar o Authorization Server a cada requisição.”
-% Ele é stateless
+\note{Uma característica importante do JWT é que ele é autocontido. Depois que eu emito esse token, qualquer serviço que consiga validar a assinatura pode aceitá-lo até o momento em que ele expire. Eu não preciso consultar o Authorization Server a cada requisição. Ele é stateless.}
   \begin{center}
     \includegraphics[width=0.8\textwidth]{jwt}
   \end{center}
@@ -259,7 +264,7 @@
     \item Bearer Authentication é um mecanismo de autenticação HTTP em
     que o cliente envia um token junto com a requisição.
 
-    \item O nome `Bearer'' significa literalmente: `Quem portar esse
+    \item O nome ``Bearer'' significa literalmente: ``Quem portar esse
     token pode usá-lo.''
 
     \item A API não verifica quem está segurando o token; ela apenas
@@ -270,16 +275,14 @@
 \section{OAuth2}
 
 \begin{frame}{O problema}
-% voltando ao exemplo anterior, imagine que o produto deu certo
-% e o sistema escalou bastante, criamos vários microserviços
-% mas todos dependentes do backend
+\note{Voltando ao exemplo anterior, imagine que o produto deu certo e o sistema escalou bastante: criamos vários microserviços, mas todos dependentes do backend.}
     \begin{figure}
         \centering
         \includegraphics[
             width=\linewidth,
             height=0.9\textheight,
             keepaspectratio
-        ]{images/architecture_diagram_v2.png}
+        ]{architecture_diagram_v2.png}
     \end{figure}
 \end{frame}
 
@@ -309,7 +312,7 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
 \begin{frame}{Client credentials}
     \begin{figure}
         \centering
-        \includegraphics[width=1\linewidth]{images/m2m-flow.png}
+        \includegraphics[width=1\linewidth]{m2m-flow.png}
     \end{figure}
     % sequenceDiagram
     % participant M2M as M2M App
@@ -337,16 +340,14 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
 \end{frame}
 
 \begin{frame}{Uma ideia: segredo sem compartilhá-lo}
-% Antes de entrar no PKCE, eu quero fazer um pequeno desvio.
-% A ideia é criar uma intuição: como provar conhecimento de um segredo
-% sem precisar enviar o próprio segredo.
+\note{Antes de entrar no PKCE, eu quero fazer um pequeno desvio. A ideia é criar uma intuição: como provar conhecimento de um segredo sem precisar enviar o próprio segredo.}
 \begin{figure}
     \centering
     \includegraphics[
         width=\linewidth,
         height=0.9\textheight,
         keepaspectratio
-    ]{images/diffie-helman.png}
+    ]{diffie-helman.png}
 \end{figure}
 \end{frame}
 
@@ -357,7 +358,7 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
             width=\linewidth,
             height=0.9\textheight,
             keepaspectratio
-        ]{images/h2m-auth-flow.png}
+        ]{h2m-auth-flow.png}
     \end{figure}
 % sequenceDiagram
 %     participant U as User
@@ -379,7 +380,7 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
             width=\linewidth,
             height=0.9\textheight,
             keepaspectratio
-        ]{images/h2m-token-exchange.png}
+        ]{h2m-token-exchange.png}
     \end{figure}
 % sequenceDiagram
 %     participant C as Client App
@@ -395,16 +396,14 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
 
 
 \begin{frame}{Fluxo Implementado}
-% Se vocês não entenderam nada, não se preocupem
-% Eu também não entendi na 1a, 2a nem na 3a vez que estudei isso
-% E vejam a complexidade de
+\note{Se vocês não entenderam nada, não se preocupem: eu também não entendi na 1a, 2a nem na 3a vez que estudei isso. E vejam a complexidade disso.}
     \begin{figure}
         \centering
         \includegraphics[
             width=\linewidth,
             height=0.9\textheight,
             keepaspectratio
-        ]{images/pkce-real.png}
+        ]{pkce-real.png}
     \end{figure}
 \end{frame}
 
@@ -458,7 +457,7 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
 \begin{frame}{ID Token}
 \begin{figure}
     \centering
-    \includegraphics[width=1\linewidth]{images/id_token.png}
+    \includegraphics[width=1\linewidth]{id_token.png}
 \end{figure}
 %    {
 %    "iss": "https://auth.example.com",
@@ -472,9 +471,7 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
 \end{frame}
 
 \begin{frame}{AMR e ACR}
-% Na nossa aplicação, o contexto de autenticação influencia o que o usuário pode fazer.
-% Por exemplo: um usuário que não autenticou com OTP não pode realizar determinada operação.
-% O AMR permite que o serviço saiba quais métodos de autenticação foram utilizados.
+\note{Na nossa aplicação, o contexto de autenticação influencia o que o usuário pode fazer. Por exemplo: um usuário que não autenticou com OTP não pode realizar determinada operação. O AMR permite que o serviço saiba quais métodos de autenticação foram utilizados.}
         \begin{itemize}
             \item \textbf{AMR}: como o usuário foi autenticado
             \item \textbf{ACR}: nível ou contexto de confiança da autenticação
@@ -498,7 +495,7 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
             width=\linewidth,
             height=0.9\textheight,
             keepaspectratio
-        ]{images/architecture_diagram_v3.png}
+        ]{architecture_diagram_v3.png}
     \end{figure}
 \end{frame}
 
@@ -524,7 +521,7 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
   \begin{center}
     \begin{figure}
         \centering
-        \includegraphics[width=1\linewidth]{images/middleware_03.png}
+        \includegraphics[width=1\linewidth]{simple-middleware.png}
     \end{figure}
 % export const isLoggedIn = (req, res, next) => {
 %   const token = req.headers.authorization?.split(' ')[1]
@@ -546,30 +543,28 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
         width=\linewidth,
         height=0.9\textheight,
         keepaspectratio
-    ]{images/middleware_05.png}
+    ]{jwks-middleware.png}
 \end{figure}
-% import * as jose from 'jose'
+%const JWKS = jose.createRemoteJWKSet(
+%new URL('https://www.googleapis.com/oauth2/v3/certs')
+%);
+%
+%app.use(async (req, res, next) => {
+%    const jwt = extractJwtFromReq(req);
+%
+%    try {
+%        const { payload } = await jose.jwtVerify(jwt, JWKS, {
+%            issuer: 'meu-emissor-de-tokens.com',
+%            audience: ['billing', 'users', 'analytics'],
+%        });
+%
+%        req.user = payload;
+%        next();
+%    } catch {
+%        res.status(401).send();
+%    }
+%});
 
-% const JWKS = jose.createRemoteJWKSet(
-%   new URL('https://auth.example.com/.well-known/jwks.json')
-% )
-
-% export const isLoggedIn = async (req, res, next) => {
-%   const token = req.headers.authorization?.split(' ')[1]
-
-%   try {
-%     - req.user = jwt.verify(token, process.env.JWT_SECRET)
-%     + const { payload } = await jose.jwtVerify(token, JWKS, {
-%     +   issuer: 'https://auth.example.com',
-%     +   audience: 'https://billing.example.com',
-%     + })
-
-%     req.user = payload
-%     next()
-%   } catch {
-%     res.status(401).json({ error: 'Unauthorized' })
-%   }
-% }
 \end{frame}
 
 \begin{frame}[standout]
