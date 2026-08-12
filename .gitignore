@@ -3,3 +3,4 @@ aux/
 build/
 build-notes/
 .gitversion.tex
+.build-datetime

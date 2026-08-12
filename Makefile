@@ -8,4 +8,4 @@ notes:
 
 clear:
 	latexmk -C
-	rm -rf dist build build-notes .gitversion.tex
+	rm -rf dist build build-notes .gitversion.tex .build-datetime
