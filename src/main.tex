@@ -66,14 +66,24 @@
 \end{frame}
 
 \begin{frame}{Objetivo}
-    \begin{figure}
+    \begin{columns}[c,onlytextwidth]
+        \column{0.5\textwidth}
         \centering
-        \includegraphics[
-            width=\linewidth,
-            height=0.9\textheight,
-            keepaspectratio
-        ]{mesh-vs-star.png}
-    \end{figure}
+        \includegraphics[width=\linewidth,height=0.7\textheight,keepaspectratio]{mesh-vs-star.png}
+
+        \column{0.5\textwidth}
+        \begin{itemize}
+            \item Desacoplar autenticação do monólito
+            \item Com isso, centralizar regras de negócio de login
+            \item Remover boilerplate, duplicações de soluções e superfícies de ataque em nosso login
+        \end{itemize}
+    \end{columns}
+
+    \vspace{1em}
+
+    \begin{center}
+        \textit{Uma única fonte de verdade para autenticação, em vez de regras espalhadas por serviço.}
+    \end{center}
 \end{frame}
 
 \begin{frame}{Sumário}
