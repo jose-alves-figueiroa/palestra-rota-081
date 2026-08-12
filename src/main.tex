@@ -18,11 +18,11 @@
 \fi
 \makeatother
 
-\immediate\write18{bash scripts/gitversion.sh > build/gitversion.tex}
+\immediate\write18{bash scripts/gitversion.sh > .gitversion.tex}
 
 \title{Escalando uma autenticação legada para sistemas distribuídos}
 \author{José Ricardo Alves Figueirôa (Zé)}
-\date{\scriptsize\texttt{v\IfFileExists{build/gitversion.tex}{\input{build/gitversion.tex}}{unknown}}}
+\date{\scriptsize\texttt{v\IfFileExists{.gitversion.tex}{\input{.gitversion.tex}}{unknown}}}
 \institute{Rota 081}
 
 \begin{document}
@@ -119,8 +119,14 @@
 
 \begin{frame}{Autenticação no backend}
   \note{Se estiver assim já tá ótimo, isso quando o cookie não é enviado no body}
-  \begin{center}
-    \includegraphics[width=1\linewidth]{login-endpoint.png}
+  \begin{figure}
+      \centering
+      \includegraphics[
+          width=\linewidth,
+          height=0.9\textheight,
+          keepaspectratio
+      ]{login-endpoint.png}
+  \end{figure}
 %    app.post('/login', async (req, res) => {
 %        const user = await authenticate(req.body);
 %
@@ -145,7 +151,6 @@
 %
 %        res.sendStatus(204);
 %    });
-  \end{center}
 \end{frame}
 
 \begin{frame}{Middleware de validação}
@@ -154,16 +159,19 @@
         \centering
         \includegraphics[width=1\linewidth]{simple-middleware.png}
     \end{figure}
-% export const isLoggedIn = (req, res, next) => {
-%   const token = req.headers.authorization?.split(' ')[1]
-
-%   try {
-%     req.user = jwt.verify(token, process.env.JWT_SECRET)
-%     next()
-%   } catch {
-%     res.status(401).json({ error: 'Unauthorized' })
-%   }
-% }
+% const SECRET = process.env.JWT_SECRET;
+%    app.use((req, res, next) => {
+%        const token = extractJwtFromReq(req);
+%
+%        try {
+%            const payload = jwt.verify(token, SECRET);
+%
+%            req.user = payload;
+%            next();
+%        } catch {
+%            res.status(401).send();
+%        }
+%    });
   \end{center}
 \end{frame}
 
@@ -638,6 +646,16 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
 %    }
 %});
 
+\end{frame}
+
+\begin{frame}{Próximos tópicos}
+    Essa jornada não termina aqui, ela abre a porta:
+
+    \begin{itemize}
+        \item \textbf{AuthZ}: quem pode fazer o quê, além de só ``quem é''
+        \item \textbf{SSO}: um login pra vários serviços
+        \item \textbf{Silent login}: manter a sessão entre múltiplos frontends sem pedir login de novo
+    \end{itemize}
 \end{frame}
 
 \begin{frame}[standout]

@@ -4,8 +4,8 @@ build:
 	latexmk src/main.tex
 
 notes:
-	latexmk src/main-notes.tex
+	latexmk -aux-directory=build-notes src/main-notes.tex
 
 clear:
 	latexmk -C
-	rm -rf dist build
+	rm -rf dist build build-notes .gitversion.tex

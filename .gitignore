@@ -1,3 +1,5 @@
 dist/
 aux/
 build/
+build-notes/
+.gitversion.tex
