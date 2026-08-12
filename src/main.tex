@@ -1,50 +1,236 @@
 \documentclass[11pt,aspectratio=169]{beamer}
+
 \usetheme{metropolis}
 
 \usepackage{fontspec}
 \usepackage{booktabs}
 \usepackage{graphicx}
-\graphicspath{{imagens/}{../imagens/}}
+
+\graphicspath{{./images/}}
 
 \newcommand{\placeholder}[2]{%
   \fbox{\parbox[c][#2][c]{#1}{\centering\textbf{PLACEHOLDER}}}%
 }
 
-\title{Escalando uma autenticação legada}
-\date{\today}
-\author{José Ricardo Alves Figueirôa}
-\institute{Jusfy}
+\title{Escalando uma autenticação legada para sistemas distribuídos}
+\author{José Ricardo Alves Figueirôa (Zé)}
+\date{}
+\institute{Rota 081}
+% Boa tarde, pessoal
+% Hoje eu vou falar sobre os desafios de escalar uma auth legada para sistemas distribuídos
+% A ideia aqui não é falar uma arq. perfeita, mas as decisões tomadas ao longo do caminho
 
 \begin{document}
 
 \maketitle
 
+\section*{whoami}
+
 \begin{frame}{whoami}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.6\textwidth}
-      \begin{itemize}
-        \item José Ricardo Alves Figueirôa
-        \item Techlead @ Jusfy
-        \item Computer Engineer --- UFPE
-        \item IoT Master --- Polytech Nice Côte d’Azur
-      \end{itemize}
-    \column{0.4\textwidth}
-      \includegraphics[width=\linewidth]{qrcode-border}
-  \end{columns}
+
+    \vfill
+    
+    \begin{columns}[c,onlytextwidth]
+    
+        \column{0.6\textwidth}
+        
+        \begin{itemize}
+          \item José Ricardo Alves Figueirôa
+          \item Techlead @ Jusfy
+          \item Computer Engineer --- UFPE
+          \item Master --- Polytech Nice Côte d’Azur
+          \item Vítima do Shal Hulud 2.0
+        \end{itemize}
+        
+        \column{0.4\textwidth}
+        
+        \centering
+        \includegraphics[width=0.65\linewidth]{images/qrcode-borderless.png}
+    
+        \vspace{0.5em}
+    
+        \scriptsize
+        \texttt{https://ze-ricardo.com}
+    
+    \end{columns}
+    
+    \vfill
+    
+    \begin{center}
+        \scriptsize \texttt{OSS}
+    \end{center}
+
 \end{frame}
 
-\begin{frame}{Objetivo}
-  \begin{itemize}
-    \item Desacoplar autenticação do monolito
-    \item Centralizar regras de negócio de login
-    \item Remover boilerplate, duplicações de soluções e superfícies de ataque no login
-  \end{itemize}
+\begin{frame}{whoami}
+    \begin{figure}
+        \includegraphics[width=0.75\linewidth]{images/shuhulud_2_0.png}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Sumário}
+\tableofcontents
+\end{frame}
+
+\section{Motivação}
+
+\begin{frame}{No príncipio}
+    \begin{figure}
+        \centering
+        \includegraphics[width=1\linewidth]{images/arch_v0.png}
+    \end{figure}
+    % architecture-beta
+    % service user(mdi:account)[User]
+    % service frontend(mdi:laptop)[Web App]
+    % service backend(mdi:server)[Backend]
+    % service db(mdi:database)[DB]
+    % user:R --> L:frontend
+    % frontend:R --> L:backend
+    % backend:R --> L:db
+\end{frame}
+
+\begin{frame}{Autenticação no backend}
   \begin{center}
-    \includegraphics[width=0.55\textwidth]{mesh-vs-star}
+    \includegraphics[width=1\linewidth]{images/middleware_01.png}
+    % app.post('/login', async (req, res) => {
+    %   const user = await authenticate(req.body)
+    %   const token = jwt.sign({ sub: user.id }, process.env.JWT_SECRET)
+    %   res.json({ access_token: token })
+    % })
   \end{center}
 \end{frame}
 
-\section{Autenticação}\label{sec:autenticacao}
+\begin{frame}{Middleware de validação}
+  \begin{center}
+    \begin{figure}
+        \centering
+        \includegraphics[width=1\linewidth]{images/middleware_03.png}
+    \end{figure}
+% export const isLoggedIn = (req, res, next) => {
+%   const token = req.headers.authorization?.split(' ')[1]
+
+%   try {
+%     req.user = jwt.verify(token, process.env.JWT_SECRET)
+%     next()
+%   } catch {
+%     res.status(401).json({ error: 'Unauthorized' })
+%   }
+% }
+  \end{center}
+\end{frame}
+
+\begin{frame}{Sistemas distribuídos}
+    \begin{figure}
+    \centering
+    \includegraphics[
+        width=\linewidth,
+        height=0.9\textheight,
+        keepaspectratio
+    ]{images/arch_v1.png}
+    \end{figure}
+% architecture-beta
+%     service user(mdi:account)[User]
+%     service mobile(mdi:cellphone)[Mobile App]
+%     service frontend(mdi:laptop)[Web App]
+
+%     service monolith(mdi:server)[Backend Monolith]
+%     service db(mdi:database)[Monolith DB]
+    
+%     service microservice(mdi:server)[Microservice]
+%     service microservice_db(mdi:database)[Microservice Database]
+
+%     service external(mdi:cloud-outline)[External App]
+
+%     user:R --> L:mobile
+%     user:B --> L:frontend
+
+%     mobile:R --> L:monolith
+%     frontend:R --> L:monolith
+
+%     monolith:R --> L:microservice
+%     monolith:B --> T:db
+%     microservice:B --> T:microservice_db
+
+%     external:B --> T:monolith
+\end{frame}
+
+\begin{frame}{API Keys}
+    \begin{figure}
+        \centering
+        \includegraphics[width=1\linewidth]{images/middleware_02.png}
+    \end{figure}
+    % app.use((req, res, next) => {
+    %   const token = req.headers.authorization?.split(' ')[1];
+    %   const apiKey = req.headers['x-api-key'];
+    
+    %   if (apiKey === process.env.API_KEY) {
+    %     return next();
+    %   }
+    
+    %   try {
+    %     req.user = jwt.verify(token, process.env.JWT_SECRET);
+    %     next();
+    %   } catch {
+    %     res.status(401).json({ error: 'Unauthorized' });
+    %   }
+    % });
+\end{frame}
+
+\begin{frame}{O caos}
+% Até que o sistema cresceu ainda mais, o serviço a não pode acessar o b
+% O usuário X não pode acessar o servico c e por aí vai
+% A gente chegou nesse ponto. A arquitetura cresceu, mas a nossa autenticação não cresceu junto.
+\begin{figure}
+    \centering
+    \includegraphics[
+        width=\linewidth,
+        height=0.9\textheight,
+        keepaspectratio
+    ]{images/arch_v2.png}
+\end{figure}
+% architecture-beta
+
+%     group clients(cloud)[Clients]
+%         service user(mdi:account)[User] in clients
+%         service mobile(mdi:cellphone)[Mobile App] in clients
+%         service frontend(mdi:laptop)[Web App] in clients
+
+%     group monolith_group(cloud)[Monolith]
+%         service monolith(mdi:server)[Backend Monolith] in monolith_group
+%         service db(mdi:database)[Monolith DB] in monolith_group
+
+%     group services(cloud)[Microservices]
+%         service billing(mdi:server)[Billing] in services
+%         service notifications(mdi:server)[Notifications] in services
+%         service documents(mdi:server)[Documents] in services
+%         service analytics(mdi:server)[Analytics] in services
+
+%     group service_data(cloud)[Service Databases]
+%         service billing_db(mdi:database)[Billing DB] in service_data
+%         service documents_db(mdi:database)[Documents DB] in service_data
+
+%     service external(mdi:cloud-outline)[External App]
+
+%     user:R --> L:mobile
+%     user:B --> L:frontend
+
+%     mobile:R --> L:monolith
+%     frontend:R --> L:monolith
+
+%     monolith:R --> L:billing
+%     monolith:R --> L:notifications
+%     monolith:R --> L:documents
+%     monolith:R --> L:analytics
+
+%     monolith:B --> T:db
+
+%     billing:B --> T:billing_db
+%     documents:B --> T:documents_db
+
+%     external:B --> T:monolith
+\end{frame}
+
+\section{Autenticação}
 
 \begin{frame}{Autenticação (AuthN) vs Autorização (AuthZ)}
   \begin{center}
@@ -52,90 +238,253 @@
   \end{center}
 \end{frame}
 
-\begin{frame}{Três formas de provar quem você é}
+\begin{frame}{Fatores de autenticação}
   \begin{center}
     \includegraphics[width=0.8\textwidth]{auth-types}
   \end{center}
 \end{frame}
 
-\section{JWTs}
+\section{JWT}
 
-\begin{frame}{JWT}
-  JWT (JSON Web Token) é um formato padronizado para transportar
-  informações entre sistemas de forma compacta e verificável.
+\begin{frame}{JWT - JSON Web Token}
+% “Uma característica importante do JWT é que ele é autocontido. Depois que eu emito esse token, qualquer serviço que consiga validar a assinatura pode aceitá-lo até o momento em que ele expire. Eu não preciso consultar o Authorization Server a cada requisição.”
+% Ele é stateless
   \begin{center}
-    \includegraphics[width=0.6\textwidth]{jwt}
+    \includegraphics[width=0.8\textwidth]{jwt}
   \end{center}
 \end{frame}
 
 \begin{frame}{Bearer Token}
   \begin{itemize}
     \item Bearer Authentication é um mecanismo de autenticação HTTP em
-      que o cliente envia um token junto com a requisição.
-    \item O nome ``Bearer'' significa literalmente: ``Quem portar esse
-      token pode usá-lo.''
+    que o cliente envia um token junto com a requisição.
+
+    \item O nome `Bearer'' significa literalmente: `Quem portar esse
+    token pode usá-lo.''
+
     \item A API não verifica quem está segurando o token; ela apenas
-      verifica se o token é válido.
+    verifica se o token é válido.
   \end{itemize}
-\end{frame}
-
-\section{Hydra}
-
-\begin{frame}{O que é o Ory Hydra?}
-  É o server de autorização OAuth2/OIDC, desenvolvido e mantido pela Ory.
-  \begin{itemize}
-    \item Valida tokens
-    \item Emite tokens
-    \item Assina tokens
-    \item Revoga tokens
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Topologia}
-  \begin{center}
-    \placeholder{0.9\textwidth}{5cm}
-  \end{center}
 \end{frame}
 
 \section{OAuth2}
 
-\begin{frame}{Client credentials}
-  \begin{center}
-    \includegraphics[width=0.85\textwidth]{m2m-flow}
-  \end{center}
+\begin{frame}{O problema}
+% voltando ao exemplo anterior, imagine que o produto deu certo
+% e o sistema escalou bastante, criamos vários microserviços
+% mas todos dependentes do backend
+    \begin{figure}
+        \centering
+        \includegraphics[
+            width=\linewidth,
+            height=0.9\textheight,
+            keepaspectratio
+        ]{images/arch_v2.png}
+    \end{figure}
 \end{frame}
 
-\begin{frame}{PKCE}
-  \begin{center}
-    \includegraphics[width=0.7\textwidth]{h2m-flow}
-  \end{center}
+\begin{frame}{Complexidade operacional}
+  Atividades de configuração se tornam morosas, desenvolvedores se tornam gargalos da operação
+
+  \begin{itemize}
+    \item Emitir uma API-KEY
+    \item Revogar uma API-KEY
+    \item Blacklist num JWT
+    \item Controle de acessos..
+  \end{itemize}
 \end{frame}
+
+\begin{frame}{OAuth2}
+
+OAuth 2.0 é um framework de autorização que permite que uma aplicação obtenha acesso limitado a recursos de outra aplicação, sem precisar conhecer as credenciais do usuário.
+
+Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \textit{access tokens}.
+
+\begin{center}
+\textit{OAuth 2.0 não é, por si só, um protocolo de autenticação.}
+\end{center}
+
+\end{frame}
+
+\begin{frame}{Client credentials}
+    \begin{figure}
+        \centering
+        \includegraphics[width=1\linewidth]{images/m2m-flow.png}
+    \end{figure}
+    % sequenceDiagram
+    % participant M2M as M2M App
+    % participant AuthServer as Authorization Server
+    % participant API
+
+    % M2M->>AuthServer: Authenticate with Application Credentials
+    % AuthServer->>AuthServer: Validate Application Credentials
+    % AuthServer-->>M2M: Access Token
+    % M2M->>API: Request user data with Access Token
+    % API-->>M2M: Response
+\end{frame}
+
+\begin{frame}{M2M: o problema}
+
+\begin{center}
+    \Large
+    \textit{O cliente precisa guardar um segredo.}
+
+    \vspace{1em}
+
+    \texttt{Client ID + Client Secret}
+\end{center}
+
+\end{frame}
+
+\begin{frame}{Uma ideia: segredo sem compartilhá-lo}
+% Antes de entrar no PKCE, eu quero fazer um pequeno desvio
+% Isto vai dar uma intuição importante para o próximo tópico
+% Também é base para JWKS
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{images/diffie-helman.png}
+\end{figure}
+\end{frame}
+
+\begin{frame}{PKCE - Fluxo de autorização}
+    \begin{figure}
+        \centering
+        \includegraphics[width=1\linewidth]{images/h2m-auth-flow.png}
+    \end{figure}
+% sequenceDiagram
+%     participant U as User
+%     participant C as Client App
+%     participant AS as Authorization Server
+
+%     C->>C: 1. Generate code_verifier
+%     C->>C: 2. Generate code_challenge
+%     C->>AS: 3. Authorization Request + code_challenge
+%     AS->>U: 4. Authenticate & Consent
+%     U->>AS: 5. Approve
+%     AS-->>C: 6. Authorization Code
+\end{frame}
+
+\begin{frame}{PKCE - Troca de token}
+    \begin{figure}
+        \centering
+        \includegraphics[width=1\linewidth]{images/h2m-token-exchange.png}
+    \end{figure}
+% sequenceDiagram
+%     participant C as Client App
+%     participant AS as Authorization Server
+%     participant API as Resource Server
+
+%     C->>AS: 7. Token Request + code + code_verifier
+%     AS->>AS: 8. Validate code_verifier
+%     AS-->>C: 9. Access Token
+%     C->>API: 10. Request + Access Token
+%     API-->>C: 11. Response
+\end{frame}
+
 
 \begin{frame}{Fluxo Implementado}
+% Se vocês não entenderam nada, não se preocupem
+% Eu também não entendi na 1a, 2a nem na 3a vez que estudei isso
+% E vejam a complexidade de
+    \begin{figure}
+        \centering
+        \includegraphics[width=1\linewidth]{images/pkce-real.png}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Access vs Refresh token}
+    
+\end{frame}
+
+\section{OIDC}
+
+\begin{frame}{ID Token}
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{images/id_token.png}
+\end{figure}
+% {
+%   "sub": "59654",                                      // usuário
+%   "iss": "https://auth.example.com",                   // emissor
+%   "aud": ["api", "billing", "documents"],              // destinatários
+%   "client_id": "jusfy-admin-spa",                      // cliente
+%   "iat": 1784724311,                                   // emitido em
+%   "exp": 1784727912,                                   // expira em
+%   "acr": "aal2",                                       // nível de autenticação
+%   "amr": ["pwd", "otp"],                               // métodos usados
+%   "scope": ["read:billing", "*:documents"]             // escopos
+% }
+\end{frame}
+
+\begin{frame}{AMR e ACR}
+% Na nossa aplicação, o contexto de autenticação influencia o que o usuário pode fazer.
+% Por exemplo: um usuário que não autenticou com OTP não pode realizar determinada operação.
+% O AMR permite que o serviço saiba quais métodos de autenticação foram utilizados.
   \begin{center}
-    \includegraphics[width=0.5\textwidth]{pkce-real}
+    \placeholder{0.9\textwidth}{5cm}
   \end{center}
 \end{frame}
 
 \section{Arquitetura}
 
-\begin{frame}{Arquitetura}
+\begin{frame}{Retomando: Middleware de validação}
   \begin{center}
-    \placeholder{0.9\textwidth}{5cm}
+    \begin{figure}
+        \centering
+        \includegraphics[width=1\linewidth]{images/middleware_03.png}
+    \end{figure}
+% export const isLoggedIn = (req, res, next) => {
+%   const token = req.headers.authorization?.split(' ')[1]
+
+%   try {
+%     req.user = jwt.verify(token, process.env.JWT_SECRET)
+%     next()
+%   } catch {
+%     res.status(401).json({ error: 'Unauthorized' })
+%   }
+% }
   \end{center}
 \end{frame}
 
-\begin{frame}{Arquitetura}
-  \begin{center}
-    \placeholder{0.9\textwidth}{5cm}
-  \end{center}
+\begin{frame}{Middleware de validação com JWKS}
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{images/middleware_04.png}
+\end{figure}
+% import * as jose from 'jose'
+
+% const JWKS = jose.createRemoteJWKSet(
+%   new URL('https://auth.example.com/.well-known/jwks.json')
+% )
+
+% export const isLoggedIn = async (req, res, next) => {
+%   const token = req.headers.authorization?.split(' ')[1]
+
+%   try {
+%     - req.user = jwt.verify(token, process.env.JWT_SECRET)
+%     + const { payload } = await jose.jwtVerify(token, JWKS, {
+%     +   issuer: 'https://auth.example.com',
+%     +   audience: 'https://billing.example.com',
+%     + })
+
+%     req.user = payload
+%     next()
+%   } catch {
+%     res.status(401).json({ error: 'Unauthorized' })
+%   }
+% }
 \end{frame}
 
 \begin{frame}[standout]
-  Obrigado!
+    Obrigado!
 
-  \vspace{1em}
-  \includegraphics[width=0.2\textwidth]{qrcode-borderless}
+    \vspace{1em}
+
+    \includegraphics[width=0.2\textwidth]{qrcode-borderless}
+
+    \vspace{0.5em}
+
+    \texttt{https://ze-ricardo.com}
 \end{frame}
 
 \end{document}
