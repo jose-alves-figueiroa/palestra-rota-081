@@ -8,12 +8,21 @@
 \setmainlanguage{portuguese}
 \usepackage{booktabs}
 \usepackage{graphicx}
+\usepackage{pdftexcmds}
 
 \graphicspath{{./images/}}
 
+\makeatletter
+\ifnum\pdf@strcmp{\jobname}{main-notes}=0
+  \setbeameroption{show notes}
+\fi
+\makeatother
+
+\immediate\write18{bash scripts/gitversion.sh > build/gitversion.tex}
+
 \title{Escalando uma autenticação legada para sistemas distribuídos}
 \author{José Ricardo Alves Figueirôa (Zé)}
-\date{}
+\date{\scriptsize\texttt{v\IfFileExists{build/gitversion.tex}{\input{build/gitversion.tex}}{unknown}}}
 \institute{Rota 081}
 
 \begin{document}
@@ -109,13 +118,33 @@
 \end{frame}
 
 \begin{frame}{Autenticação no backend}
+  \note{Se estiver assim já tá ótimo, isso quando o cookie não é enviado no body}
   \begin{center}
     \includegraphics[width=1\linewidth]{login-endpoint.png}
-    % app.post('/login', async (req, res) => {
-    %   const user = await authenticate(req.body)
-    %   const token = jwt.sign({ sub: user.id }, process.env.JWT_SECRET)
-    %   res.json({ access_token: token })
-    % })
+%    app.post('/login', async (req, res) => {
+%        const user = await authenticate(req.body);
+%
+%        const token = jwt.sign(
+%            { sub: user.id },
+%        process.env.JWT_SECRET
+%        );
+%
+%        const params = {
+%            httpOnly: true,
+%            secure: true,
+%            sameSite: 'strict',
+%            path: '/',
+%            domain: '.company.com'
+%        };
+%
+%        res.cookie(
+%        'access_token',
+%        token,
+%        params
+%        );
+%
+%        res.sendStatus(204);
+%    });
   \end{center}
 \end{frame}
 

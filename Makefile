@@ -1,7 +1,10 @@
-.PHONY: build clear
+.PHONY: build notes clear
 
 build:
-	latexmk
+	latexmk src/main.tex
+
+notes:
+	latexmk src/main-notes.tex
 
 clear:
 	latexmk -C
