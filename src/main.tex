@@ -66,6 +66,7 @@
 \end{frame}
 
 \begin{frame}{Objetivo}
+    \note{Esse objetivo pode parecer só sobre remover duplicação, mas o ponto central da palestra é que, conforme o sistema cresce, autenticação deixa de ser um detalhe de implementação de cada serviço e passa a ser uma capacidade da plataforma. Vamos voltar a essa ideia no final.}
     \begin{columns}[c,onlytextwidth]
         \column{0.5\textwidth}
         \begin{itemize}
@@ -195,7 +196,7 @@
 \end{frame}
 
 \begin{frame}{O caos}
-\note{Até que o sistema cresceu ainda mais, o serviço a não pode acessar o b. O usuário X não pode acessar o serviço c e por aí vai. A gente chegou nesse ponto: a arquitetura cresceu, mas a nossa autenticação não cresceu junto.}
+\note{Chave estática por serviço não escala: cada novo consumidor é mais uma chave hardcoded, sem expiração, sem rotação, e sem saber quem realmente está chamando. Até que o sistema cresceu ainda mais, o serviço a não pode acessar o b. O usuário X não pode acessar o serviço c e por aí vai. A gente chegou nesse ponto: a arquitetura cresceu, mas a nossa autenticação não cresceu junto.}
 \begin{figure}
     \centering
     \includegraphics[
@@ -273,14 +274,20 @@
 
 \section{JWT}
 
-\begin{frame}{JWT - JSON Web Token}
-\note{Uma característica importante do JWT é que ele é autocontido. Depois que eu emito esse token, qualquer serviço que consiga validar a assinatura pode aceitá-lo até o momento em que ele expire. Eu não preciso consultar o Authorization Server a cada requisição. Ele é stateless.}
+\begin{frame}{Como validar sem depender do servidor? (JWT)}
+\note{Uma característica importante do JWT é que ele é autocontido. Depois que eu emito esse token, qualquer serviço que consiga validar a assinatura pode aceitá-lo até o momento em que ele expire. Eu não preciso consultar o Authorization Server a cada requisição.}
   \begin{center}
     \includegraphics[width=0.8\textwidth]{jwt}
   \end{center}
+
+  \vspace{1em}
+
+  \begin{center}
+    \textit{Stateless para validar, difícil de revogar antes da expiração.}
+  \end{center}
 \end{frame}
 
-\begin{frame}{Bearer Token}
+\begin{frame}{Quem pode usar esse token? (Bearer)}
   \begin{itemize}
     \item Bearer Authentication é um mecanismo de autenticação HTTP em
     que o cliente envia um token junto com a requisição.
@@ -316,9 +323,17 @@
     \item Blacklist num JWT
     \item Controle de acessos..
   \end{itemize}
+
+  \vspace{1em}
+
+  \begin{center}
+    \textit{O problema deixou de ser ``como validar um token?'' e passou a
+    ser ``como gerenciar identidades, credenciais e permissões?''}
+  \end{center}
 \end{frame}
 
-\begin{frame}{OAuth2}
+\begin{frame}{Como delegar acesso sem distribuir a credencial? (OAuth2)}
+\note{Tudo isso que acabamos de ver — emitir, revogar, blacklist, controle de acesso — hoje é feito manualmente por cada equipe, sem um padrão em comum. O problema agora é: como delegar acesso sem distribuir a credencial original? O OAuth2 não resolve isso com uma técnica específica; ele fornece um framework de autorização, com papéis e fluxos padronizados, pra essa delegação.}
 
 OAuth 2.0 é um framework de autorização que permite que uma aplicação obtenha acesso limitado a recursos de outra aplicação, sem precisar conhecer as credenciais do usuário.
 
@@ -330,7 +345,8 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
 
 \end{frame}
 
-\begin{frame}{Client credentials}
+\begin{frame}{Como autenticar serviço a serviço? (Client Credentials)}
+\note{Aqui o segredo já não dá acesso direto à API: ele é usado só pra obter, junto ao Authorization Server, um token com escopo e duração controlados. Isso já é uma melhoria operacional grande em relação à API Key estática.}
     \begin{figure}
         \centering
         \includegraphics[width=1\linewidth]{m2m-flow.png}
@@ -348,6 +364,7 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
 \end{frame}
 
 \begin{frame}{M2M: o problema}
+\note{Mas olha só: o cliente ainda precisa guardar um segredo estático pra fazer essa troca. O problema de gerenciar a credencial do workload continua existindo — só mudou de lugar.}
 
 \begin{center}
     \Large
@@ -372,7 +389,7 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
 \end{figure}
 \end{frame}
 
-\begin{frame}{PKCE - Fluxo de autorização}
+\begin{frame}{Como provar o segredo sem expô-lo? (PKCE 1/2)}
     \begin{figure}
         \centering
         \includegraphics[
@@ -394,7 +411,7 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
 %     AS-->>C: 6. Authorization Code
 \end{frame}
 
-\begin{frame}{PKCE - Troca de token}
+\begin{frame}{Como trocar o código pelo token? (PKCE 2/2)}
     \begin{figure}
         \centering
         \includegraphics[
@@ -460,7 +477,7 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
 
 \section{OIDC}
 
-\begin{frame}{OIDC}
+\begin{frame}{Quem é o usuário autenticado? (OIDC)}
 
     OpenID Connect é uma camada de identidade construída sobre
     OAuth 2.
@@ -475,7 +492,7 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
 
 \end{frame}
 
-\begin{frame}{ID Token}
+\begin{frame}{Como carregar a identidade do usuário? (ID Token)}
 \begin{figure}
     \centering
     \includegraphics[width=1\linewidth]{id_token.png}
@@ -491,7 +508,7 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
 %}
 \end{frame}
 
-\begin{frame}{AMR e ACR}
+\begin{frame}{Com que confiança o usuário autenticou? (AMR/ACR)}
 \note{Na nossa aplicação, o contexto de autenticação influencia o que o usuário pode fazer. Por exemplo: um usuário que não autenticou com OTP não pode realizar determinada operação. O AMR permite que o serviço saiba quais métodos de autenticação foram utilizados.}
         \begin{itemize}
             \item \textbf{AMR}: como o usuário foi autenticado
@@ -528,6 +545,12 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
         \item Autenticação acoplada ao monólito
         \item Operações difíceis de revogar e rotacionar
     \end{itemize}
+
+    \vspace{1em}
+
+    \begin{center}
+        $\rightarrow$ \textit{Identidade e emissão de tokens centralizadas.}
+    \end{center}
 
     \vfill
 
