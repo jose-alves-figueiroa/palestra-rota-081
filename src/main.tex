@@ -77,7 +77,7 @@
 \begin{frame}{No príncipio}
     \begin{figure}
         \centering
-        \includegraphics[width=1\linewidth]{images/arch_v0.png}
+        \includegraphics[width=1\linewidth]{images/architecture_diagram_v0.png}
     \end{figure}
     % architecture-beta
     % service user(mdi:account)[User]
@@ -126,7 +126,7 @@
         width=\linewidth,
         height=0.9\textheight,
         keepaspectratio
-    ]{images/arch_v1.png}
+    ]{images/architecture_diagram_v1.png}
     \end{figure}
 % architecture-beta
 %     service user(mdi:account)[User]
@@ -186,7 +186,7 @@
         width=\linewidth,
         height=0.9\textheight,
         keepaspectratio
-    ]{images/arch_v2.png}
+    ]{images/architecture_diagram_v2.png}
 \end{figure}
 % architecture-beta
 
@@ -279,7 +279,7 @@
             width=\linewidth,
             height=0.9\textheight,
             keepaspectratio
-        ]{images/arch_v2.png}
+        ]{images/architecture_diagram_v2.png}
     \end{figure}
 \end{frame}
 
@@ -440,34 +440,85 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
 
 \section{OIDC}
 
+\begin{frame}{OIDC}
+
+    OpenID Connect é uma camada de identidade construída sobre
+    OAuth 2.
+
+    Ele permite que uma aplicação obtenha informações sobre o
+    usuário que foi autenticado, através de um \textit{ID Token}.
+
+    \begin{center}
+        \textit{OAuth 2.0 responde ``o que pode acessar?''.
+        OIDC responde ``quem está autenticado?''.}
+    \end{center}
+
+\end{frame}
+
 \begin{frame}{ID Token}
 \begin{figure}
     \centering
     \includegraphics[width=1\linewidth]{images/id_token.png}
 \end{figure}
-% {
-%   "sub": "59654",                                      // usuário
-%   "iss": "https://auth.example.com",                   // emissor
-%   "aud": ["api", "billing", "documents"],              // destinatários
-%   "client_id": "jusfy-admin-spa",                      // cliente
-%   "iat": 1784724311,                                   // emitido em
-%   "exp": 1784727912,                                   // expira em
-%   "acr": "aal2",                                       // nível de autenticação
-%   "amr": ["pwd", "otp"],                               // métodos usados
-%   "scope": ["read:billing", "*:documents"]             // escopos
-% }
+%    {
+%    "iss": "https://auth.example.com",
+%    "sub": "user_eb77026a-9068-4b6e-8e32-0844fdfb04dd",
+%    "aud": ["billing-service", "document-service"],
+%    "iat": 1784724311, // horário de emissão
+%    "exp": 1784727912, // horário de expiração
+%    "acr": "aal2",
+%    "amr": ["pwd", "otp"]
+%}
 \end{frame}
 
 \begin{frame}{AMR e ACR}
 % Na nossa aplicação, o contexto de autenticação influencia o que o usuário pode fazer.
 % Por exemplo: um usuário que não autenticou com OTP não pode realizar determinada operação.
 % O AMR permite que o serviço saiba quais métodos de autenticação foram utilizados.
-  \begin{center}
-    \placeholder{0.9\textwidth}{5cm}
-  \end{center}
+        \begin{itemize}
+            \item \textbf{AMR}: como o usuário foi autenticado
+            \item \textbf{ACR}: nível ou contexto de confiança da autenticação
+        \end{itemize}
+
+        \vspace{1em}
+
+        \begin{center}
+            \textit{A autenticação pode ter contexto, não é apenas
+            ``logado'' ou ``não logado''.}
+        \end{center}
+
 \end{frame}
 
 \section{Arquitetura}
+
+\begin{frame}{Arquitetura}
+    \begin{figure}
+        \centering
+        \includegraphics[
+            width=\linewidth,
+            height=0.9\textheight,
+            keepaspectratio
+        ]{images/architecture_diagram_v3.png}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{O que mudou?}
+
+    \begin{itemize}
+        \item Segredos compartilhados entre serviços
+        \item Configuração manual por serviço
+        \item Autenticação acoplada ao monólito
+        \item Operações difíceis de revogar e rotacionar
+    \end{itemize}
+
+    \vfill
+
+    \begin{center}
+        \Large
+        \textbf{A autenticação virou uma capacidade da plataforma.}
+    \end{center}
+
+\end{frame}
 
 \begin{frame}{Retomando: Middleware de validação}
   \begin{center}
@@ -495,7 +546,7 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
         width=\linewidth,
         height=0.9\textheight,
         keepaspectratio
-    ]{images/middleware_04.png}
+    ]{images/middleware_05.png}
 \end{figure}
 % import * as jose from 'jose'
 
