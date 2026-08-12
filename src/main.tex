@@ -337,19 +337,27 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
 \end{frame}
 
 \begin{frame}{Uma ideia: segredo sem compartilhá-lo}
-% Antes de entrar no PKCE, eu quero fazer um pequeno desvio
-% Isto vai dar uma intuição importante para o próximo tópico
-% Também é base para JWKS
+% Antes de entrar no PKCE, eu quero fazer um pequeno desvio.
+% A ideia é criar uma intuição: como provar conhecimento de um segredo
+% sem precisar enviar o próprio segredo.
 \begin{figure}
     \centering
-    \includegraphics[width=1\linewidth]{images/diffie-helman.png}
+    \includegraphics[
+        width=\linewidth,
+        height=0.9\textheight,
+        keepaspectratio
+    ]{images/diffie-helman.png}
 \end{figure}
 \end{frame}
 
 \begin{frame}{PKCE - Fluxo de autorização}
     \begin{figure}
         \centering
-        \includegraphics[width=1\linewidth]{images/h2m-auth-flow.png}
+        \includegraphics[
+            width=\linewidth,
+            height=0.9\textheight,
+            keepaspectratio
+        ]{images/h2m-auth-flow.png}
     \end{figure}
 % sequenceDiagram
 %     participant U as User
@@ -367,7 +375,11 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
 \begin{frame}{PKCE - Troca de token}
     \begin{figure}
         \centering
-        \includegraphics[width=1\linewidth]{images/h2m-token-exchange.png}
+        \includegraphics[
+            width=\linewidth,
+            height=0.9\textheight,
+            keepaspectratio
+        ]{images/h2m-token-exchange.png}
     \end{figure}
 % sequenceDiagram
 %     participant C as Client App
@@ -388,12 +400,42 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
 % E vejam a complexidade de
     \begin{figure}
         \centering
-        \includegraphics[width=1\linewidth]{images/pkce-real.png}
+        \includegraphics[
+            width=\linewidth,
+            height=0.9\textheight,
+            keepaspectratio
+        ]{images/pkce-real.png}
     \end{figure}
 \end{frame}
 
-\begin{frame}{Access vs Refresh token}
-    
+\begin{frame}{Access vs Refresh Token}
+
+    \begin{columns}[T,onlytextwidth]
+
+        \column{0.5\textwidth}
+
+        \textbf{Access Token}
+
+        \begin{itemize}
+            \item Curta duração
+            \item Enviado para Resource Servers
+            \item Representa uma autorização
+            \item Pode ser JWT
+        \end{itemize}
+
+        \column{0.5\textwidth}
+
+        \textbf{Refresh Token}
+
+        \begin{itemize}
+            \item Longa duração
+            \item Enviado apenas ao Authorization Server
+            \item Usado para obter novos Access Tokens
+            \item Deve ser protegido com mais cuidado
+        \end{itemize}
+
+    \end{columns}
+
 \end{frame}
 
 \section{OIDC}
@@ -449,7 +491,11 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
 \begin{frame}{Middleware de validação com JWKS}
 \begin{figure}
     \centering
-    \includegraphics[width=1\linewidth]{images/middleware_04.png}
+    \includegraphics[
+        width=\linewidth,
+        height=0.9\textheight,
+        keepaspectratio
+    ]{images/middleware_04.png}
 \end{figure}
 % import * as jose from 'jose'
 
