@@ -312,7 +312,14 @@
 \begin{frame}{Como validar sem depender do servidor?}
 \note{Uma característica importante do JWT é que ele é autocontido. Depois que eu emito esse token, qualquer serviço que consiga validar a assinatura pode aceitá-lo até o momento em que ele expire. Eu não preciso consultar o Authorization Server a cada requisição.}
   \begin{center}
-    \includegraphics[width=0.8\textwidth]{jwt}
+      \begin{figure}
+          \centering
+          \includegraphics[
+              width=\linewidth,
+              height=0.9\textheight,
+              keepaspectratio
+          ]{jwt.png}
+      \end{figure}
   \end{center}
 
   \vspace{1em}
@@ -334,6 +341,7 @@
 \end{frame}
 
 \begin{frame}{Quem pode usar esse token? (Bearer)}
+    \note{Analogia da pulseira da festa}
   \begin{itemize}
     \item Bearer Authentication é um mecanismo de autenticação HTTP em
     que o cliente envia um token junto com a requisição.
@@ -497,17 +505,6 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
 
         \column{0.5\textwidth}
 
-        \textbf{Access Token}
-
-        \begin{itemize}
-            \item Curta duração
-            \item Enviado para Resource Servers
-            \item Representa uma autorização
-            \item Pode ser JWT
-        \end{itemize}
-
-        \column{0.5\textwidth}
-
         \textbf{Refresh Token}
 
         \begin{itemize}
@@ -515,6 +512,17 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
             \item Enviado apenas ao Authorization Server
             \item Usado para obter novos Access Tokens
             \item Deve ser protegido com mais cuidado
+        \end{itemize}
+
+        \column{0.5\textwidth}
+
+        \textbf{Access Token}
+
+        \begin{itemize}
+            \item Curta duração
+            \item Enviado para Resource Servers
+            \item Representa uma autorização
+            \item Pode ser JWT
         \end{itemize}
 
     \end{columns}
