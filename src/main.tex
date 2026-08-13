@@ -358,6 +358,7 @@
 
 \begin{frame}{O problema}
 \note{Voltando ao exemplo anterior, imagine que o produto deu certo e o sistema escalou bastante: criamos vários microserviços, mas todos dependentes do backend.}
+\note{É um caso real meu, porque a empresa tem inúmeros microserviços, cada um com um sistema de auth. Seria inviável alterar o código de cada um. Pior de tudo que temos que atualizar sem quebrar}
     \begin{figure}
         \centering
         \includegraphics[
@@ -591,30 +592,6 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
     \end{figure}
 \end{frame}
 
-\begin{frame}{O que mudou?}
-
-    \begin{itemize}
-        \item Segredos compartilhados entre serviços
-        \item Configuração manual por serviço
-        \item Autenticação acoplada ao monólito
-        \item Operações difíceis de revogar e rotacionar
-    \end{itemize}
-
-    \vspace{1em}
-
-    \begin{center}
-        $\rightarrow$ \textit{Identidade e emissão de tokens centralizadas.}
-    \end{center}
-
-    \vfill
-
-    \begin{center}
-        \Large
-        \textbf{A autenticação virou uma capacidade da plataforma.}
-    \end{center}
-
-\end{frame}
-
 \begin{frame}{Retomando: Middleware de validação}
   \begin{center}
     \begin{figure}
@@ -674,6 +651,31 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
 %        \item \textbf{Silent login}: manter a sessão entre múltiplos frontends sem pedir login de novo
 %    \end{itemize}
 %\end{frame}
+
+\begin{frame}{O que mudou?}
+
+    \begin{itemize}
+        \item Segredos compartilhados entre serviços
+        \item Configuração manual por serviço
+        \item Autenticação acoplada ao monólito
+        \item Operações difíceis de revogar e rotacionar
+        \item Autenticação padronizável, podemos mover do código para infra (ingress)
+    \end{itemize}
+
+    \vspace{1em}
+
+    \begin{center}
+        $\rightarrow$ \textit{Identidade e emissão de tokens centralizadas.}
+    \end{center}
+
+    \vfill
+
+    \begin{center}
+        \Large
+        \textbf{A autenticação virou uma capacidade da plataforma.}
+    \end{center}
+
+\end{frame}
 
 \begin{frame}[standout]
     Obrigado!
