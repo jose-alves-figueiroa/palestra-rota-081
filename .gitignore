@@ -1,4 +1,4 @@
-dist/
+dist/*
 aux/
 build/
 build-notes/
