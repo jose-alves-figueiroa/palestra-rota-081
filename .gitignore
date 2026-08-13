@@ -4,3 +4,5 @@ build/
 build-notes/
 .gitversion.tex
 .build-datetime
+
+!dist/main.pdf

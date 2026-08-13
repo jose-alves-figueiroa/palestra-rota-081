@@ -309,7 +309,7 @@
 
 \section{JWT}
 
-\begin{frame}{Como validar sem depender do servidor? (JWT)}
+\begin{frame}{Como validar sem depender do servidor?}
 \note{Uma característica importante do JWT é que ele é autocontido. Depois que eu emito esse token, qualquer serviço que consiga validar a assinatura pode aceitá-lo até o momento em que ele expire. Eu não preciso consultar o Authorization Server a cada requisição.}
   \begin{center}
     \includegraphics[width=0.8\textwidth]{jwt}
@@ -320,6 +320,17 @@
   \begin{center}
     \textit{Stateless para validar, difícil de revogar antes da expiração.}
   \end{center}
+\end{frame}
+
+\begin{frame}{Processo de emissão de JWT}
+    \begin{figure}
+        \centering
+        \includegraphics[
+            width=\linewidth,
+            height=0.9\textheight,
+            keepaspectratio
+        ]{jwt_emissao.png}
+    \end{figure}
 \end{frame}
 
 \begin{frame}{Quem pode usar esse token? (Bearer)}
@@ -412,17 +423,17 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
 
 \end{frame}
 
-\begin{frame}{Uma ideia: segredo sem compartilhá-lo}
-\note{Antes de entrar no PKCE, eu quero fazer um pequeno desvio. A ideia é criar uma intuição: como provar conhecimento de um segredo sem precisar enviar o próprio segredo.}
-\begin{figure}
-    \centering
-    \includegraphics[
-        width=\linewidth,
-        height=0.9\textheight,
-        keepaspectratio
-    ]{diffie-helman.png}
-\end{figure}
-\end{frame}
+%\begin{frame}{Uma ideia: segredo sem compartilhá-lo}
+%\note{Antes de entrar no PKCE, eu quero fazer um pequeno desvio. A ideia é criar uma intuição: como provar conhecimento de um segredo sem precisar enviar o próprio segredo.}
+%\begin{figure}
+%    \centering
+%    \includegraphics[
+%        width=\linewidth,
+%        height=0.9\textheight,
+%        keepaspectratio
+%    ]{diffie-helman.png}
+%\end{figure}
+%\end{frame}
 
 \begin{frame}{Como provar o segredo sem expô-lo? (PKCE 1/2)}
     \begin{figure}
@@ -543,21 +554,21 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
 %}
 \end{frame}
 
-\begin{frame}{Com que confiança o usuário autenticou? (AMR/ACR)}
-\note{Na nossa aplicação, o contexto de autenticação influencia o que o usuário pode fazer. Por exemplo: um usuário que não autenticou com OTP não pode realizar determinada operação. O AMR permite que o serviço saiba quais métodos de autenticação foram utilizados.}
-        \begin{itemize}
-            \item \textbf{AMR}: como o usuário foi autenticado
-            \item \textbf{ACR}: nível ou contexto de confiança da autenticação
-        \end{itemize}
-
-        \vspace{1em}
-
-        \begin{center}
-            \textit{A autenticação pode ter contexto, não é apenas
-            ``logado'' ou ``não logado''.}
-        \end{center}
-
-\end{frame}
+%\begin{frame}{Com que confiança o usuário autenticou? (AMR/ACR)}
+%\note{Na nossa aplicação, o contexto de autenticação influencia o que o usuário pode fazer. Por exemplo: um usuário que não autenticou com OTP não pode realizar determinada operação. O AMR permite que o serviço saiba quais métodos de autenticação foram utilizados.}
+%        \begin{itemize}
+%            \item \textbf{AMR}: como o usuário foi autenticado
+%            \item \textbf{ACR}: nível ou contexto de confiança da autenticação
+%        \end{itemize}
+%
+%        \vspace{1em}
+%
+%        \begin{center}
+%            \textit{A autenticação pode ter contexto, não é apenas
+%            ``logado'' ou ``não logado''.}
+%        \end{center}
+%
+%\end{frame}
 
 \section{Arquitetura}
 
@@ -646,15 +657,15 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
 
 \end{frame}
 
-\begin{frame}{Próximos tópicos}
-    Essa jornada não termina aqui, ela abre a porta:
-
-    \begin{itemize}
-        \item \textbf{AuthZ}: quem pode fazer o quê, além de só ``quem é''
-        \item \textbf{SSO}: um login pra vários serviços
-        \item \textbf{Silent login}: manter a sessão entre múltiplos frontends sem pedir login de novo
-    \end{itemize}
-\end{frame}
+%\begin{frame}{Próximos tópicos}
+%    Essa jornada não termina aqui, ela abre a porta:
+%
+%    \begin{itemize}
+%        \item \textbf{AuthZ}: quem pode fazer o quê, além de só ``quem é''
+%        \item \textbf{SSO}: um login pra vários serviços
+%        \item \textbf{Silent login}: manter a sessão entre múltiplos frontends sem pedir login de novo
+%    \end{itemize}
+%\end{frame}
 
 \begin{frame}[standout]
     Obrigado!
