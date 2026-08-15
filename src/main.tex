@@ -368,7 +368,7 @@
   \end{itemize}
 \end{frame}
 
-\section{OAuth2}
+\section{OAuth2 e OIDC}
 
 \begin{frame}{O problema}
 \note{Voltando ao exemplo anterior, imagine que o produto deu certo e o sistema escalou bastante: criamos vários microserviços, mas todos dependentes do backend.}
@@ -514,16 +514,17 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
     \end{figure}
 \end{frame}
 
-\begin{frame}{E se eu quiser deslogar um usuário?}
+\begin{frame}{E se meu token for roubado?}
     \begin{center}
         \Large
-        \textit{É só apagar o token?}
+        \textit{O que acontece se alguém roubar meu Access Token?}
     \end{center}
 
     \vspace{2em}
 
     \begin{itemize}
-        \item O token já foi emitido
+        \item O token é um \textit{Bearer Token}
+        \item Quem possui o token pode utilizá-lo
         \item O Resource Server consegue validá-lo sem consultar o Authorization Server
         \item Enquanto estiver válido, ele continua sendo aceito
     \end{itemize}
@@ -531,13 +532,21 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
     \vspace{1em}
 
     \begin{center}
-        \textit{Como revogar algo que foi feito para ser validado
-        de forma stateless?}
+        \textit{Como limitar o estrago se um token válido for comprometido?}
     \end{center}
 \end{frame}
 
-
+\begin{frame}{Refresh Token}
+    \begin{figure}
+        \centering
+        \includegraphics[
+            width=\linewidth,
+            height=0.9\textheight,
+            keepaspectratio
+        ]{refresh-flow.png}
+    \end{figure}
 \end{frame}
+
 
 \begin{frame}{Access vs Refresh Token}
 
@@ -569,8 +578,6 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
 
 \end{frame}
 
-\section{OIDC}
-
 \begin{frame}{Quem é o usuário autenticado? (OIDC)}
 
     OpenID Connect é uma camada de identidade construída sobre
@@ -587,6 +594,12 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
 \end{frame}
 
 \begin{frame}{Como carregar a identidade do usuário? (ID Token)}
+    \note{
+        \begin{itemize}
+            \item Falar do case bancário
+            \item KYC, pwd, etc
+        \end{itemize}
+    }
 \begin{figure}
     \centering
     \includegraphics[width=1\linewidth]{id_token.png}
