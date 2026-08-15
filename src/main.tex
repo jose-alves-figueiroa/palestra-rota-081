@@ -79,6 +79,7 @@
             \item A ideia aqui não é falar de uma arquitetura perfeita.
             \item Falar de como a demanda veio
             \item Falar de não onerar os desenvolvedores
+            \item Falar que não podia pensar apenas em código porque havia vários sistemas
             \item Falar como foi bom para a carreira
         \end{itemize}
     }
@@ -349,7 +350,12 @@
 \end{frame}
 
 \begin{frame}{Quem pode usar esse token? (Bearer)}
-    \note{Analogia da pulseira da festa}
+    \note{
+        \begin{itemize}
+            \item Analogia da pulseira da festa
+            \item Stateless6
+        \end{itemize}
+    }
   \begin{itemize}
     \item Bearer Authentication é um mecanismo de autenticação HTTP em
     que o cliente envia um token junto com a requisição.
@@ -506,6 +512,31 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
             keepaspectratio
         ]{pkce-real.png}
     \end{figure}
+\end{frame}
+
+\begin{frame}{E se eu quiser deslogar um usuário?}
+    \begin{center}
+        \Large
+        \textit{É só apagar o token?}
+    \end{center}
+
+    \vspace{2em}
+
+    \begin{itemize}
+        \item O token já foi emitido
+        \item O Resource Server consegue validá-lo sem consultar o Authorization Server
+        \item Enquanto estiver válido, ele continua sendo aceito
+    \end{itemize}
+
+    \vspace{1em}
+
+    \begin{center}
+        \textit{Como revogar algo que foi feito para ser validado
+        de forma stateless?}
+    \end{center}
+\end{frame}
+
+
 \end{frame}
 
 \begin{frame}{Access vs Refresh Token}
