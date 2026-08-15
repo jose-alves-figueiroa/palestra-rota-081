@@ -349,11 +349,23 @@
     \end{figure}
 \end{frame}
 
+\begin{frame}{Retomando exmeplo de validação}
+    \note{Preciso armazenar apenas o SECRET, não o token.}
+    \begin{figure}
+        \centering
+        \includegraphics[
+            width=\linewidth,
+            height=0.9\textheight,
+            keepaspectratio
+        ]{simple-middleware.png}
+    \end{figure}
+\end{frame}
+
 \begin{frame}{Quem pode usar esse token? (Bearer)}
     \note{
         \begin{itemize}
             \item Analogia da pulseira da festa
-            \item Stateless6
+            \item Stateless
         \end{itemize}
     }
   \begin{itemize}
@@ -365,6 +377,8 @@
 
     \item A API não verifica quem está segurando o token; ela apenas
     verifica se o token é válido.
+
+    \item Por ser \textit{stateless}, não preciso armazená-lo no banco de dados, preciso apenas de UM secret.
   \end{itemize}
 \end{frame}
 
@@ -514,25 +528,24 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
     \end{figure}
 \end{frame}
 
-\begin{frame}{E se meu token for roubado?}
-    \begin{center}
-        \Large
-        \textit{O que acontece se alguém roubar meu Access Token?}
-    \end{center}
-
-    \vspace{2em}
+\begin{frame}{O que acontece se alguém roubar meu Access Token?}
 
     \begin{itemize}
         \item O token é um \textit{Bearer Token}
         \item Quem possui o token pode utilizá-lo
         \item O Resource Server consegue validá-lo sem consultar o Authorization Server
         \item Enquanto estiver válido, ele continua sendo aceito
+        \item Como fazer \textit{logout?}
     \end{itemize}
 
     \vspace{1em}
 
     \begin{center}
-        \textit{Como limitar o estrago se um token válido for comprometido?}
+        \begin{itemize}
+            \item \textit{Como limitar o estrago se um token válido for comprometido?}
+            \item Configurar um tempo de expiração muito baixo
+            \item \textit{Mas aí o usuário precisar refazer autenticação?}
+        \end{itemize}
     \end{center}
 \end{frame}
 
@@ -560,6 +573,7 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
             \item Longa duração
             \item Enviado apenas ao Authorization Server
             \item Usado para obter novos Access Tokens
+            \item É \textit{stateful} e deve ser armazenado no Banco de Dados
             \item Deve ser protegido com mais cuidado
         \end{itemize}
 
@@ -569,8 +583,9 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
 
         \begin{itemize}
             \item Curta duração
-            \item Enviado para Resource Servers
+            \item Enviado para Resource Servers (APIs)
             \item Representa uma autorização
+            \item É \textit{stateless} e depende apenas do secret
             \item Pode ser JWT
         \end{itemize}
 
@@ -644,6 +659,41 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
     \end{figure}
 \end{frame}
 
+\begin{frame}{JWKS}
+
+    \begin{columns}[c,onlytextwidth]
+
+        \column{0.48\textwidth}
+        \begin{center}
+            \Large
+            \textbf{Chave privada}
+
+            \vspace{1em}
+
+            \begin{itemize}
+                \item Fica somente no Authorization Server
+                \item Assina os JWTs
+                \item Nunca deve ser distribuída
+            \end{itemize}
+        \end{center}
+
+        \column{0.48\textwidth}
+        \begin{center}
+            \Large
+            \textbf{Chave pública}
+
+            \vspace{1em}
+
+            \begin{itemize}
+                \item Pode ser distribuída aos serviços
+                \item Valida os JWTs
+                \item Não permite criar novos tokens
+            \end{itemize}
+        \end{center}
+
+    \end{columns}
+\end{frame}
+
 \begin{frame}{Retomando: Middleware de validação}
   \begin{center}
     \begin{figure}
@@ -694,6 +744,17 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
 
 \end{frame}
 
+\begin{frame}{Arquitetura final}
+    \begin{figure}
+        \centering
+        \includegraphics[
+            width=\linewidth,
+            height=0.9\textheight,
+            keepaspectratio
+        ]{arch_ingress.png}
+    \end{figure}
+\end{frame}
+
 %\begin{frame}{Próximos tópicos}
 %    Essa jornada não termina aqui, ela abre a porta:
 %
@@ -705,6 +766,7 @@ Ele define papéis, fluxos e mecanismos para delegar esse acesso através de \te
 %\end{frame}
 
 \begin{frame}{O que mudou?}
+    \note{É assim que escalamos uma autenticação legada.}
 
     \begin{itemize}
         \item Segredos compartilhados entre serviços
